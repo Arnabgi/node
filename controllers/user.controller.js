@@ -21,6 +21,7 @@ module.exports= {
             res.send(error);
         }
     },
+    
     fetchUserData : async(req,res)=>{
         try {
             let uid = req.params.uid;
@@ -69,6 +70,23 @@ module.exports= {
             let value = req.params.searchvalue;
             let searchData = await service.searchData(value);
             res.json({status:200,message:"success",data:searchData});
+        } catch (error) {
+            res.send(error);
+        }
+    },
+    pagination : async(req,res)=>{  
+            try {
+                let page = await service.pageCount();
+                res.json({status:200, message:"success", data:page});
+            } catch (error) {
+                res.send(error);
+            }
+    },
+
+    joinTable: async(req,res)=>{
+        try {
+            let joinValue = await service.connectAnotherTable();
+            res.json({status:200, message:"success", data:joinValue})
         } catch (error) {
             res.send(error);
         }

@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      // const table1 = sequelize.define('UserDetails');
+      // const table2 = sequelize.define('UserInfo');
+      userdetails.hasOne(models.UserInfo,{foreignKey: 'uid'});
+      //table1.hasOne(table2,{foreignKey: 'uid'});
     }
   }
   userdetails.init({
@@ -19,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'userdetails',
+    modelName: 'UserDetails',
   });
   return userdetails;
 };

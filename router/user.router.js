@@ -9,5 +9,7 @@ route.get('/fetchuser/:uid',controlller.fetchUserData);
 route.get('/descOrderWiseUser',controlller.orderWiseUser)
 route.delete('/deleteuser/:uid',controlller.deleteUserData);
 route.put('/updateuser/:uid',updateValidation,controlller.updateUserData);
-route.get('/searchUser/:searchvalue',controlller.searchUser);
+route.get('/searchuser/:searchvalue',controlller.searchUser);
+route.get('/pagecount',controlller.pagination);
+route.get('/join-value',controlller.joinTable);
 module.exports = route;

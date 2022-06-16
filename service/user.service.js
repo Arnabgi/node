@@ -1,6 +1,7 @@
-const { sequelize } = require('../models');
+//const { sequelize } = require('../models');
 const model = require('../models');
-const userData = model.userdetails;
+const userData = model.UserDetails;
+const UserInfo = model.UserInfo;
 const {Op} = require('sequelize');
 module.exports={
     getData : async()=>{
@@ -80,6 +81,37 @@ module.exports={
             });
             return searchData;
         } catch (error) {
+            throw error;
+        }
+    },
+    pageCount : async()=>{
+        try {
+            let countData = await userData.findAndCountAll({
+                offset: 10,
+                limit: 5
+            });
+            return countData;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    connectAnotherTable : async()=>{
+        try {
+           let joinData = await userData.findAll({
+                       include :  UserInfo,
+                    // include : [{
+                    //     model : UserInfo,
+                    //     where : {
+                    //         uid : 1
+                    //     }
+                    // }],
+                    
+                    //logging: console.log
+           });
+           return joinData;
+        } catch (error) {
+            console.log(error);
             throw error;
         }
     }
