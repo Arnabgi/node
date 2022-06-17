@@ -1,8 +1,13 @@
 const express = require('express');
 const route = require('./router');
 const userInfoRoute = require('./router/userinfo.router');
+//const jwt = require('jsonwebtoken');
+const dotnev = require('dotenv');
+
+dotnev.config();
 const app = express();
 const port = 3100;
+
 app.use(express.json());
 app.use("/path/v1",route);
 app.use("/user-info/v1",userInfoRoute);

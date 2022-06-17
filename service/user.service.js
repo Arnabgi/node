@@ -3,6 +3,7 @@ const model = require('../models');
 const userData = model.UserDetails;
 const UserInfo = model.UserInfo;
 const {Op} = require('sequelize');
+const jwt = require('jsonwebtoken');
 module.exports={
     getData : async()=>{
         try {
@@ -12,11 +13,14 @@ module.exports={
             throw error;
         }
     },
-    createData : async(value)=>{
+    createData : async(value,token)=>{
         try {
             const createdata = await userData.create(value);
-            return createdata;
+            const passToken = jwt.sign(createdata.toJSON(),token);
+            console.log(passToken);
+            return passToken;
         } catch (error) {
+            console.log(error);
             throw error;
         }
     },
@@ -74,9 +78,19 @@ module.exports={
         try {
             let searchData = await userData.findAll({
                 where: {
-                    firstName:{
-                        [Op.like] : `%${value}%`
-                    }
+                    [Op.or]:[
+                        {
+                        firstName:{
+                            [Op.like] : `%${value}%`
+                        }},
+                        {
+                        lastName:{
+                            [Op.like] : `%${value}%`
+                            }
+                        }
+                    ]
+
+                    
                 }
             });
             return searchData;
@@ -84,30 +98,36 @@ module.exports={
             throw error;
         }
     },
-    pageCount : async()=>{
+    pageCount : async(currentpage)=>{
+        //console.log(currentpage);
         try {
-            let countData = await userData.findAndCountAll({
-                offset: 10,
-                limit: 5
-            });
-            return countData;
-        } catch (error) {
-            throw error;
+            let val = await userData.findAndCountAll();
+            let limitValue = 2;
+            let offsetValue = (currentpage -1)*limitValue;
+            let totalPage = Math.ceil(val.count/limitValue);
+            let paginate = await userData.findAll({
+                offset : offsetValue,
+                limit :limitValue
+            })
+            return paginate;
+            //console.log(offset);
         }
-    },
+        catch(error){
+            console.log(error);
+                throw error;
+        }   
+},  
 
     connectAnotherTable : async()=>{
         try {
            let joinData = await userData.findAll({
-                       include :  UserInfo,
-                    // include : [{
-                    //     model : UserInfo,
-                    //     where : {
-                    //         uid : 1
-                    //     }
-                    // }],
+                       //include :  UserInfo,
+                    include : [{
+                        model : UserInfo,
+                        required: true //required use for inner join
+                    }],
                     
-                    //logging: console.log
+                   // logging: console.log
            });
            return joinData;
         } catch (error) {
