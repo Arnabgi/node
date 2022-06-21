@@ -4,6 +4,7 @@ const userData = model.UserDetails;
 const UserInfo = model.UserInfo;
 const {Op} = require('sequelize');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 module.exports={
     getData : async()=>{
         try {
@@ -17,10 +18,10 @@ module.exports={
         try {
             const createdata = await userData.create(value);
             const passToken = jwt.sign(createdata.toJSON(),token);
-            console.log(passToken);
+            //console.log(passToken);
             return passToken;
         } catch (error) {
-            console.log(error);
+            //console.log(error);
             throw error;
         }
     },
@@ -113,10 +114,10 @@ module.exports={
             //console.log(offset);
         }
         catch(error){
-            console.log(error);
+            //console.log(error);
                 throw error;
         }   
-},  
+    },  
 
     connectAnotherTable : async()=>{
         try {
@@ -131,8 +132,35 @@ module.exports={
            });
            return joinData;
         } catch (error) {
+            //console.log(error);
+            throw error;
+        }
+    },
+
+    sign : async(loginData,token)=>{
+        try {
+                let checkEmail = await userData.findOne({
+                    where:{
+                        email : loginData.email,
+                        // password : loginData.password
+                    }
+                });
+                if(checkEmail){
+                    let checkPassword = await bcrypt.compare(loginData.password,checkEmail.password);
+                if(!checkPassword){
+                    throw "Invalid Password";
+                }else{
+                    let msg1 = "Login Success"
+                    let tokenPass = jwt.sign(checkEmail.toJSON(msg1),token);
+                    return tokenPass;
+              } 
+            }else{
+                throw "Invalid user";
+            }
+        } catch (error) {
             console.log(error);
             throw error;
         }
     }
+
 }

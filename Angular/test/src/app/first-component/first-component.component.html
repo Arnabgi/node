@@ -1,0 +1,19 @@
+<div>
+    <form [formGroup]="testForm">
+        <div class="row">
+            <label>Uid:</label>
+            <input type="text" formControlName="uid">
+        </div>
+        <div class="row">
+            <label>Qualification:</label>
+            <input type="text" formControlName="qualification">
+        </div>
+        <div class="row">
+            <label>Upload Image:</label>
+            <input type="file" formControlName="upload" (change)="imageLoad($event)">
+        </div>
+        <div>
+            <button type="submit" (click)="submitForm()">Submit</button>
+        </div>
+    </form>
+</div>

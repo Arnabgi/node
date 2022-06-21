@@ -3,6 +3,7 @@ module.exports = [
     body("firstName").notEmpty(),
     body("lastName").notEmpty(),
     body("email").notEmpty().isEmail(),
+    body("password").notEmpty().isStrongPassword(),
     (req,res,next)=>{
         const errors = validationResult(req);
         let array = errors.array();
@@ -13,7 +14,7 @@ module.exports = [
           });
         }
         else{
-          next()
+          next();
         }
         
     }

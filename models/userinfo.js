@@ -15,7 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }
   UserInfo.init({
     uid: DataTypes.INTEGER,
-    qualification: DataTypes.STRING
+    qualification: DataTypes.STRING,
+    upload : DataTypes.STRING
   }, {
     sequelize,
     modelName: 'UserInfo',

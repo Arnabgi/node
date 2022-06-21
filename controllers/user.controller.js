@@ -1,4 +1,5 @@
 const service = require('../service/user.service');
+const bcrypt = require('bcrypt');
 module.exports= {
     getUserData: async(req,res)=>{
         try {
@@ -10,12 +11,15 @@ module.exports= {
     },
     createUserData : async(req,res)=>{
         try {
+            const salt = await bcrypt.genSalt(10)
+            // console.log(salt);
+            // return;
             let token =process.env.JWT_SECRET_KEY;
             let value = {
                 firstName : req.body.firstName,
                 lastName  : req.body.lastName,
                 email     : req.body.email,
-                password  : req.body.password
+                password  : await bcrypt.hash(req.body.password,salt) 
             }; 
              let createData = await service.createData(value,token);
              res.json({status:200, message:"success", data:createData});
@@ -81,7 +85,7 @@ module.exports= {
            try {
             let currentpage = req.query.pageno;
             let paginationData = await service.pageCount(currentpage);
-            res.json({status:200,message:"success",data:paginationData})
+            res.json({status:200,message:"success",data:paginationData});
            } catch (error) {
             res.send(error);
            }
@@ -90,9 +94,25 @@ module.exports= {
     joinTable: async(req,res)=>{
         try {
             let joinValue = await service.connectAnotherTable();
-            res.json({status:200, message:"success", data:joinValue})
+            res.json({status:200, message:"success", data:joinValue});
         } catch (error) {
             res.send(error);
+        }
+    },
+    
+    login: async(req,res)=>{
+        let passToken =process.env.AUTH_SECRET_KEY;
+        try {
+            let loginData = {
+                email : req.body.email,
+                password : req.body.password 
+            };
+            let signIn = await service.sign(loginData,passToken);
+            res.json({status:200,message:"Login Success", data:signIn});
+
+        } catch (error) {
+            //res.send(error);
+            res.json({status:401,message:error});
         }
     }
 }
